@@ -3,10 +3,8 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use App\Rules\AtLeastOneValueInArray;
-use Illuminate\Validation\Rule;
 
-class PostStoreRequest extends FormRequest
+class CategoryStoreRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,15 +22,7 @@ class PostStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => 'required|string|max:255',
-            'content' => 'required|string',
-            'categories' => [
-                'required',
-                'array',
-                Rule::exists('categories', 'id')->where(function ($query) {
-                    $query->whereNotNull('id');
-                }),
-            ]
+            'name' => 'required|string|max:255',
         ];
     }
 }
