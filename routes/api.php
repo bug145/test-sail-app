@@ -5,6 +5,7 @@ use App\Http\Controllers\PostController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\RegisterController;
+use App\Http\Controllers\UserController;
 
 // Posts
 Route::controller(PostController::class)->group(function () {
@@ -36,9 +37,24 @@ Route::controller(RegisterController::class)->group(function () {
     Route::post('register', 'register'); // Register a new user
     Route::post('login', 'login'); // Login a user
 });
+Route::controller(UserController::class)->group(function () {
+    Route::get('user', 'index'); // Get user info
+    Route::get('user/{user}', 'show'); // Get user info by id
+    Route::put('user', 'update'); // Update user info
+    Route::delete('user', 'destroy'); // Delete user
+});
 
-Route::middleware('auth:sanctum')->group( function () {
+
+/* --------------------------------Middleware----------------------------------
+ * Route for authenticated users only (using Sanctum middleware)
+ */
+Route::middleware('auth:sanctum')->group(function () {
+    Route::resource('user', UserController::class)->except(['show']);
+
     Route::resource('posts', PostController::class)->except(['index', 'show']);
+
     Route::resource('categories', CategoryController::class)->except(['index']);
-    Route::resource('comments', CommentController::class)->except(['index']);
+
+    Route::resource('comments', CommentController::class);
+    Route::resource('posts', CommentController::class)->except(['index']);
 });

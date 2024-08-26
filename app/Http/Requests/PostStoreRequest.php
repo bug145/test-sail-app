@@ -3,7 +3,6 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use App\Rules\AtLeastOneValueInArray;
 use Illuminate\Validation\Rule;
 
 class PostStoreRequest extends FormRequest
@@ -29,9 +28,7 @@ class PostStoreRequest extends FormRequest
             'categories' => [
                 'required',
                 'array',
-                Rule::exists('categories', 'id')->where(function ($query) {
-                    $query->whereNotNull('id');
-                }),
+                Rule::exists('categories', 'id'),
             ]
         ];
     }
