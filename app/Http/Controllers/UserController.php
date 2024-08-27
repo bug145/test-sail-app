@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\UserStoreRequest;
 use App\Models\User;
+use Illuminate\Support\Facades\Storage;
 
 class UserController extends BaseController
 {
@@ -30,12 +32,20 @@ class UserController extends BaseController
         return $this->sendResponse($user, 'User info');
     }
 
-    public function update()
+    public function update(UserStoreRequest $request)
     {
-        $user = auth()
-            ->guard('sanctum')
-            ->user();
+        if ($request->hasFile('avatar')) {
+            $file = $request->file('avatar');
 
-        return $this->sendResponse($user, 'User info');
+            // $request->file('avatar')->store("public/avatars/" . $file->getClientOriginalName(), 'minio');
+            Storage::disk('minio')->put($file->getClientOriginalName(), $file);
+        }
+
+        $data = $request->validated();
+        // $user = auth()
+        //     ->guard('sanctum')
+        //     ->user();
+
+        return $this->sendResponse($data, 'User info');
     }
 }
