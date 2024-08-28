@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\UserStoreRequest;
+use App\Http\Resources\UserResource;
 use App\Models\User;
 
 class UserController extends BaseController
@@ -11,25 +12,17 @@ class UserController extends BaseController
     {
         $user = auth()
             ->guard('sanctum')
-            ->user()
-            ->withCount('posts')
-            ->withCount('comments')
-            ->get()
-            ->first();
+            ->user();
+        $userResource = new UserResource($user);
 
-        return $this->sendResponse($user, 'User info');
+        return $this->sendResponse($userResource, 'User info');
     }
 
     public function show(User $user)
     {
-        $user = $user
-            ->withCount('posts')
-            ->withCount('comments')
-            ->get()
-            ->first()
-            ->makeHidden(['email_verified_at', 'updated_at', 'email']);
+        $userResource = new UserResource($user);
 
-        return $this->sendResponse($user, 'User info');
+        return $this->sendResponse($userResource, 'User info');
     }
 
     public function update(UserStoreRequest $request)

@@ -32,7 +32,8 @@ return Application::configure(basePath: dirname(__DIR__))
             return response()->json([
                 'success' => false,
                 'data' => null,
-                'message' => preg_replace('/\s?\[[^\]]*\]\s?/i', ' | ', $exception->getMessage()),
+                // 'message' => preg_replace('/\s?\[[^\]]*\]\s?/i', ' | ', $exception->getMessage()),
+                'message' => $exception->getMessage(),
             ], $code);
         });
     })->create();

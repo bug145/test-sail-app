@@ -12,7 +12,7 @@ use App\Http\Controllers\UserController;
 // User Authentication Routes
 Route::controller(RegisterController::class)->group(function () {
     Route::post('register', 'register');
-    Route::post('login', 'login');
+    Route::post('login', 'login')->name('login');
 });
 
 // Public Post Routes
@@ -33,7 +33,6 @@ Route::get('posts/{post}/comments', [CommentController::class, 'index']);
 /* --------------------------------Authenticated Routes (Требуется аутентификация) -------------------------- */
 
 Route::middleware('auth:sanctum')->group(function () {
-
     // User Management Routes
     Route::get('user', [UserController::class, 'index']);
     Route::put('user', [UserController::class, 'update']);
