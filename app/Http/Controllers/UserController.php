@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\UserStoreRequest;
 use App\Models\User;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
 
 class UserController extends BaseController
 {
@@ -15,7 +15,8 @@ class UserController extends BaseController
             ->user()
             ->withCount('posts')
             ->withCount('comments')
-            ->get();
+            ->get()
+            ->first();
 
         return $this->sendResponse($user, 'User info');
     }
@@ -34,18 +35,42 @@ class UserController extends BaseController
 
     public function update(UserStoreRequest $request)
     {
-        if ($request->hasFile('avatar')) {
-            $file = $request->file('avatar');
-
-            // $request->file('avatar')->store("public/avatars/" . $file->getClientOriginalName(), 'minio');
-            Storage::disk('minio')->put($file->getClientOriginalName(), $file);
-        }
+        $user = auth()
+            ->guard('sanctum')
+            ->user();
 
         $data = $request->validated();
-        // $user = auth()
-        //     ->guard('sanctum')
-        //     ->user();
 
-        return $this->sendResponse($data, 'User info');
+        if ($request->hasFile('avatar')) {
+            unset($data['avatar']);
+            $file = $request->file('avatar');
+
+            if ($file->isValid()) {
+                $path = $request->file('avatar')->store("avatars", 'minio');
+                $user->update(["avatar" => $path]);
+            }
+        }
+
+        $user->update($data);
+        $user = $user
+            ->withCount('posts')
+            ->withCount('comments')
+            ->get()
+            ->first();
+
+
+        return $this->sendResponse($user, 'User info');
+    }
+
+    public function destroy()
+    {
+        $user = auth()
+            ->guard('sanctum')
+            ->user();
+
+        $user->delete();
+
+
+        return $this->sendResponse([], 'User successfully deleted');
     }
 }

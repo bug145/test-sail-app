@@ -34,13 +34,7 @@ class CategoryController extends BaseController
 
     public function destroy(Category $category)
     {
-        DB::transaction(function () use ($category) {
-            $category->posts()->each(function ($post) {
-                $post->delete();
-            });
-
-            $category->delete();
-        });
+        $category->delete();
 
         return $this->sendResponse([], 'Deleted successfully');
     }
