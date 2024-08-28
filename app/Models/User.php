@@ -53,7 +53,7 @@ class User extends Authenticatable
     protected function avatar(): Attribute
     {
         return Attribute::make(
-            get: fn(string $value) => Storage::disk('minio')->url($value),
+            get: fn(string $value) => $value ? Storage::disk('minio')->url($value) : '',
         );
     }
 
