@@ -19,6 +19,9 @@ Route::controller(RegisterController::class)->group(function () {
 Route::get('posts', [PostController::class, 'index']);
 Route::get('posts/{post}', [PostController::class, 'show']);
 
+// Public User Routes
+Route::get('user/{user}', [UserController::class, 'show']);
+
 // Public Category Routes
 Route::get('categories', [CategoryController::class, 'index']);
 
