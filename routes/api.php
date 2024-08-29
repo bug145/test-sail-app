@@ -16,40 +16,34 @@ Route::controller(RegisterController::class)->group(function () {
 });
 
 // Public Post Routes
-Route::get('posts', [PostController::class, 'index']);
-Route::get('posts/{post}', [PostController::class, 'show']);
+Route::resource('posts', PostController::class)->only(['index', 'show']);
 
 // Public User Routes
 Route::get('user/{user}', [UserController::class, 'show']);
 
 // Public Category Routes
-Route::get('categories', [CategoryController::class, 'index']);
+Route::resource('categories', CategoryController::class)->only(['index']);
 
 // Public Comment Routes
 Route::get('posts/{post}/comments', [CommentController::class, 'index']);
-
 
 
 /* --------------------------------Authenticated Routes (Требуется аутентификация) -------------------------- */
 
 Route::middleware('auth:sanctum')->group(function () {
     // User Management Routes
-    Route::get('user', [UserController::class, 'index']);
-    Route::put('user', [UserController::class, 'update']);
-    Route::delete('user', [UserController::class, 'destroy']);
+    Route::controller(UserController::class)->group(function () {
+        Route::get('user', 'index'); // Get user info
+        Route::post('user', 'update'); // Update user info
+        Route::delete('user', 'destroy'); // Delete user
+    });
 
     // Post Management Routes
-    Route::post('posts', [PostController::class, 'store']);
-    Route::put('posts/{post}', [PostController::class, 'update']);
-    Route::delete('posts/{post}', [PostController::class, 'destroy']);
+    Route::resource('posts', PostController::class)->except(['index', 'show']);
 
     // Category Management Routes
-    Route::post('categories', [CategoryController::class, 'store']);
-    Route::put('categories/{category}', [CategoryController::class, 'update']);
-    Route::delete('categories/{category}', [CategoryController::class, 'destroy']);
+    Route::resource('categories', CategoryController::class)->except(['index', 'show']);
 
     // Comment Management Routes
-    Route::post('posts/{post}/comments', [CommentController::class, 'store']);
-    Route::put('comments/{comment}', [CommentController::class, 'update']);
-    Route::delete('comments/{comment}', [CommentController::class, 'destroy']);
+    Route::resource('comments', CommentController::class)->except(['index', 'show']);
 });

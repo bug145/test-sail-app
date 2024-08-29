@@ -34,7 +34,6 @@ class UserController extends BaseController
         $data = $request->validated();
 
         if ($request->hasFile('avatar')) {
-            unset($data['avatar']);
             $file = $request->file('avatar');
 
             if ($file->isValid()) {
@@ -43,15 +42,12 @@ class UserController extends BaseController
             }
         }
 
+        unset($data['avatar']);
         $user->update($data);
-        $user = $user
-            ->withCount('posts')
-            ->withCount('comments')
-            ->get()
-            ->first();
 
+        $userResource = new UserResource($user);
 
-        return $this->sendResponse($user, 'User info');
+        return $this->sendResponse($userResource, 'User info');
     }
 
     public function destroy()
